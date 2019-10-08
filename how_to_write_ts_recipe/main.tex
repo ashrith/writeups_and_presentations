@@ -1,0 +1,638 @@
+\documentclass[11pt,
+%10pt, 
+%hyperref={colorlinks},
+aspectratio=169,
+hyperref={colorlinks}
+]{beamer}
+\usetheme{Singapore}
+\usecolortheme[snowy, cautious]{owl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[american]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks=true,
+        urlcolor=[rgb]{1,0,1},
+        linkcolor=[rgb]{1,0,1}}
+
+\usepackage[natbib=true,style=authoryear,backend=bibtex,useprefix=true]{biblatex}
+\usepackage{listings}
+\lstset{numbers=right, 
+numberstyle=\tiny, 
+%        breaklines=true,
+%        backgroundcolor=\color{light-gray},
+numbersep=5pt,
+xleftmargin=\parindent,
+xrightmargin=.25in} 
+
+%\setbeamercolor*{bibliography entry title}{fg=black}
+%\setbeamercolor*{bibliography entry location}{fg=black}
+%\setbeamercolor*{bibliography entry note}{fg=black}
+\definecolor{OwlGreen}{RGB}{75,0,130} % easier to see
+\setbeamertemplate{bibliography item}{}
+\setbeamerfont{caption}{size=\footnotesize}
+\setbeamertemplate{frametitle continuation}{}
+\setcounter{tocdepth}{1}
+\renewcommand*{\bibfont}{\scriptsize}
+\addbibresource{bibliography.bib}
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+
+%\author{\copyright\hspace{1pt}Ashrith Barthur\footnote{\tiny{This material is shared under a \href{https://creativecommons.org/licenses/by/4.0/deed.ast}{CC By 4.0 license} which allows for editing and redistribution, even for commercial purposes. However, any derivative work should attribute the author and H2O.AI.}}}
+\author{Ashrith Barthur}
+\title{How to Write A Recipe, and a TimeSeries Recipe?}
+\subtitle{Automating Feature Engineering Using DriverlessAI}
+\logo{\includegraphics[height=8pt]{img/h2o_logo.png}}
+\institute{\href{https://www.h2o.ai}{H\textsubscript{2}O.ai}}
+\date{\today}
+\subject{How to Write A Recipe?}
+
+\begin{document}
+
+\maketitle
+
+%	\begin{frame}
+
+%		\frametitle{Contents}
+
+%		\tableofcontents{}
+
+%	\end{frame}
+
+%-------------------------------------------------------------------------------
+\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}
+        \frametitle{Question}
+        \begin{enumerate}
+                \item How many of us have built variables, features, transformers, or feature transformers?
+                \item What are they?
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Answer}
+%-------------------------------------------------------------------------------
+\begin{frame}
+        \frametitle{Answer}
+        \begin{enumerate}
+                \item Variables, features, transformers, feature transformers all refer to the same.
+                \item Each column in your data is considered a variable(\textit{incoming}) or a feature(\textit{incoming}).
+                \item Each \textit{new} column created is also referred to as a variable or a feature.
+                \item The process of creating a new variable, or a feature is called a transformation. 
+                \item The code processing an \textit{existing} column to a \textit{new} column is called a \textit{transformer}.
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Example Transformation}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Example Transformation}
+        \begin{enumerate}
+                \item \textit{height}- Variable
+                \item New variable after transformation \textit{log2(height)}
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}
+        \frametitle{Question}
+        \begin{enumerate}
+                \item How many of us are familiar with Custom Transformers in Driverless AI?
+                \item What are they?
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Answer}
+%-------------------------------------------------------------------------------
+\begin{frame}
+        \frametitle{Answer}
+        \begin{enumerate}
+                \item DriverlessAI already has a large, comprehensive set of transformers. 
+                \item But there are always domains that require nuanced features. 
+                \item And for this, DriverlessAI provides us to create custom transformers. 
+                \item This is provided by provisioning an extension class \textit{CustomTransformer}
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Recipe Introduction}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{How Did We Build A Custom Transformer?}
+        Driverless AI provides an extension. \\
+        This is a class `CustomTransformer`
+        \begin{verbatim}
+            class ExampleLogTransformer(CustomTransformer):
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Feature Recipe Structure}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{How Did We Build This?}
+        The class has:
+        \begin{enumerate}
+                \item Parameters that need to be provided. 
+                \item These parameters are specific to the type of feature recipe that you are building. 
+                \item It also has four methods which primarily handle your feature engineering transformation. 
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Parameters - Basic}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Parameters - Basic}
+        \begin{verbatim}
+        class ExampleLogTransformer(CustomTransformer):
+            _regression = True
+            _binary = True
+            _multiclass = True
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Parameters - Advanced}
+        \begin{verbatim}
+        class ExampleLogTransformer(CustomTransformer):
+            _regression = True
+            _binary = True
+            _multiclass = True
+            _numeric_output = True
+            _is_reproducible = True
+            _excluded_model_classes = [`tensorflow']
+            _modules_needed_by_name = ["custom_package==1.0.0"]
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Acceptance Method}
+        \begin{verbatim}
+        class ExampleLogTransformer(CustomTransformer):
+            _regression = True
+            _binary = True
+            _multiclass = True
+            _numeric_output = True
+            _is_reproducible = True
+            _excluded_model_classes = [`tensorflow']
+            _modules_needed_by_name = ["custom_package==1.0.0"]
+
+            @staticmethod
+            def do_acceptance_test():
+                return True
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Input Data}
+        \begin{verbatim}
+            ...
+            @staticmethod
+            def do_acceptance_test():
+                return True
+
+            @staticmethod
+            def get_default_properties():
+                return dict(col_type = "numeric"
+                    ,min_cols = 1, max_cols = 1, 
+                    relative_importance = 1)
+        \end{verbatim}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Input Data Types}
+        \begin{verbatim}
+        a. "all"    - all column types
+        b. "any"    - any column types
+        c. "numeric"    - numeric int/float column
+        d. "categorical" - string/int/float column considered a categorical 
+                            for feature engineering
+        e. "numcat" - allow both numeric or categorical
+        f. "datetime"    - string or int column with raw datetime such as 
+                            `%Y/%m/%d %H:%M:%S' or `%Y%m%d%H%M'
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Input Data Types}
+        \begin{verbatim}
+        g. "date"   - string or int column with raw date such as 
+                      `%Y/%m/%d' or `%Y%m%d'
+        h. "text"   - string column containing text 
+                       (and hence not treated as categorical)
+        i. "time_column" - the time column specified at the start of 
+                            the experiment (unmodified)
+        \end{verbatim}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Fit Function}
+        \begin{verbatim}
+            @staticmethod
+            def get_default_properties():
+                return dict(col_type = "numeric"
+                    ,min_cols = 1, max_cols = 1,
+                    relative_importance = 1)
+
+            def fit_transform(self, X: dt.Frame, y: np.array = None):
+                X_pandas = X.to_pandas()
+                X_p_log = np.log10(X_pandas)
+                return X_p_log
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Transform Function}
+        \begin{verbatim}
+        def fit_transform(self, X: dt.Frame, y: np.array = None):
+            X_pandas = X.to_pandas()
+            X_p_log = np.log10(X_pandas)
+            return X_p_log
+
+        def transform(self, X: dt.Frame):
+            X_pandas = X.to_pandas()
+            X_p_log = np.log10(X_pandas)
+            return X_p_log
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Library}
+        \begin{verbatim}
+        from h2oaicore.systemutils import segfault, 
+            ,loggerinfo, main_logger
+        from h2oaicore.transformer_utils 
+            import CustomTransformer
+        import datatable as dt
+        import numpy as np
+        import pandas as pd
+        import logging
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Time Series Introduction Auto Arima}
+        \begin{enumerate}
+                \item In our example we will bring in the \textit{auto\_arima}  function as a part of the recipe. 
+                \item This is available in the \textit{pmdarima} package available for \textit{Python}.
+                \item The \textit{auto\_arima} function tries different `p`, `q`, and `d` values for \textit{ARIMA}, automatically. 
+                \item It selects the best values based on the lowest value in the information criterion. 
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Recap on ARIMA}
+        What is ARIMA?\\
+        ARIMA stands for Auto Regressive Integrated Moving Average
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Recap on ARIMA}
+        Auto Regressive means the target depends on its own lags:
+        \begin{enumerate}
+                \item $Y_{t} = \alpha  + \beta_{1}Y_{t-1}+...+\beta_{p}Y_{t-p}+\epsilon_{t}$
+        \end{enumerate}
+        Integrated means that the target has been differenced to make the time series stationary:
+        \begin{enumerate}
+                \item First order differencing: $Y_{t}^{d1} = Y_{t} - Y_{t-1}$
+                \item Second order differencing: $Y_{t}^{d2} = Y_{t}^{d1} - Y_{t-1}^{d1}$
+        \end{enumerate}
+        Moving Average means the target depends on previous prediction errors:
+        \begin{enumerate}
+                \item $Y_{t} = \alpha + \phi_{1}\epsilon_{t-1} + ... + \beta_{q}\epsilon_{t-q}$
+        \end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Feature Recipe Structure}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{TimeSeries Recipe Basics}
+        \begin{enumerate}
+                \item There is a custom class for creating TimeSeries recipes \textit{CustomTimeSeriesTransformer}. 
+                \item Similar to \textit{CustomTransformer}, \textit{CustomTimeSeriesTransformer} has pre-defined parameters and functions. 
+        \end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Parameters - Basic}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Generic Recipe Parameters}
+        \begin{verbatim}
+        class MyAutoArimaTransformer(CustomTimeSeriesTransformer):
+            _binary = False
+            _multiclass = False
+            _modules_needed_by_name = [`pmdarima']
+            _included_model_classes = None
+        \end{verbatim}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{TimeSeries Recipe Specific Parameters}
+        \begin{verbatim}
+            self.tgc = kwargs[`tgc']  
+            self.target = kwargs[`target']  
+            if isinstance(kwargs[`time_column'],list):
+                self.time_column = kwargs[`time_column'][0] 
+            else:
+                self.time_column kwargs[`time_column']
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Feature Recipe Structure}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{TimeSeries Recipe Specific Parameters}
+        There are three parameters primarily required by CustomTimeSeries class.
+        \begin{enumerate}
+                \item \verb|self.tgc| Time series groups
+                \item \verb|self.target| The target column
+                \item \verb|self.time_column| The column that holds time. 
+        \end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Feature Recipe Structure}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{TimeSeries Recipe Class}
+        The \textit{CustomTimeSeriesTransformer} class shares the basic, four methods of \textit{CustomTransformer} Class. These are methods that DriverlessAI invokes while running custom recipes.
+        \begin{enumerate}
+                \item \verb|do_acceptance_test|
+                \item \verb|get_default_properties|
+                \item \verb|fit_transform|
+                \item \verb|transform|
+        \end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Feature Recipe Structure}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{TimeSeries Recipe Class}
+        Additionally, there are two other functions that are invokable in \textit{CustomTimeSeriesTransformer} class. They are:
+        \begin{enumerate}
+                \item \verb|fit| builds the model to which the data will fit. 
+                \item \verb|update_history| updates the model fit with additional data. 
+        \end{enumerate}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\subsection{Parameters - Basic}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Acceptance and Properties Methods}
+        \begin{verbatim}
+        @staticmethod
+        def do_acceptance_test():
+        return False
+
+        @staticmethod
+        def get_default_properties():
+            return dict(col_type="time_column"
+                ,min_cols=1, max_cols=1,
+                relative_importance=1)
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Fit Function}
+        \begin{verbatim}
+        def fit(self, X: dt.Frame, y: np.array = None):
+            pm = importlib.import_module(`pmdarima')
+            self.models = {}
+            X = X.to_pandas()
+            XX = X[self.tgc].copy()
+            XX[`y'] = np.array(y)
+            self.nan_value = np.mean(y)
+            elf.ntrain = X.shape[0]
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Fit Function}
+        \begin{verbatim}
+            tgc_wo_time = list(np.setdiff1d(self.tgc, self.time_column))
+            if len(tgc_wo_time) > 0:
+                XX_grp = XX.groupby(tgc_wo_time)
+            else:
+                XX_grp = [([None], XX)]
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Fit Function}
+        \begin{verbatim}
+            nb_groups = len(XX_grp)
+            for _i_g, (key, X) in enumerate(XX_grp):
+                key = key if isinstance(key, list) else [key]
+                grp_hash = `_'.join(map(str, key))
+                order = np.argsort(X[self.time_column])
+                try:
+                    model = pm.auto_arima(X[`y'].values[order] 
+                            ,error_action=`ignore')
+                    except:
+                    model = None
+                self.models[grp_hash] = model
+                return self
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Transform Function}
+        \begin{verbatim}
+            nb_groups = len(XX_grp)
+            preds = []
+            for _i_g, (key, X) in enumerate(XX_grp):
+                key = key if isinstance(key, list) else [key]
+                grp_hash = `_'.join(map(str, key))
+                order = np.argsort(X[self.time_column])
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Transform Function}
+        \begin{verbatim}
+            if grp_hash in self.models:
+	            model = self.models[grp_hash]
+	            if model is not None:
+	                if hasattr(self, `is_train'): 
+	                    yhat = model.predict_in_sample()
+	                else:
+	                    model.predict(n_periods=X.shape[0])
+	                yhat = yhat[order]
+	                XX = pd.DataFrame(yhat, columns=[`yhat'])
+	             else:
+	                XX = pd.DataFrame(np.full((X.shape[0], 1), self.nan_value) 
+	                     ,columns=[`yhat'])  # invalid model
+	                        ...
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Transform Function}
+        \begin{verbatim}
+                            ...
+            else:
+                XX = pd.DataFrame(np.full((X.shape[0], 1), self.nan_value), 
+                columns=[`yhat'])  # unseen groups
+                XX.index = X.index
+                preds.append(XX)
+            XX = pd.concat(tuple(preds), axis=0).sort_index()
+            return XX
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Fit Transform Function}
+        \begin{verbatim}
+            def fit_transform(self, X: dt.Frame, y: np.array = None):
+                self.is_train = True
+                ret = self.fit(X, y).transform(X)
+                del self.is_train
+                return ret
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Update History Function}
+        \begin{verbatim}
+            def update_history(self, X: dt.Frame, y: np.array = None):
+                X = X.to_pandas()
+                XX = X[self.tgc].copy()
+                XX[`y'] = np.array(y)
+                tgc_wo_time = list(np.setdiff1d(self.tgc, self.time_column))
+                if len(tgc_wo_time) > 0:
+                   XX_grp = XX.groupby(tgc_wo_time)
+                else:
+                   XX_grp = [([None], XX)]
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Building the Update History Function}
+        \begin{verbatim}
+                for key, X in XX_grp:
+                    key = key if isinstance(key, list) else [key]
+                    grp_hash = `_'.join(map(str, key))
+                    order = np.argsort(X[self.time_column])
+                    if grp_hash in self.models:
+                        model = self.models[grp_hash]
+                         if model is not None:
+                            model.update(X[`y'].values[order])
+                return self
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+        \frametitle{Library}
+        \begin{verbatim}
+        from h2oaicore.systemutils import segfault, 
+            ,loggerinfo, main_logger
+        from h2oaicore.transformer_utils 
+            import CustomTimeSeriesTransformer
+        import datatable as dt
+        import numpy as np
+        import pandas as pd
+        import logging
+        \end{verbatim}
+\end{frame}
+%-------------------------------------------------------------------------------
+%\subsection{Question}
+%-------------------------------------------------------------------------------
+\begin{frame}
+        \frametitle{Advantages}
+        \begin{enumerate}
+                \item Feature engineering process standardised by:
+                        \begin{enumerate}
+                                \item preset parameters
+                                \item preset methods
+                        \end{enumerate}
+                \item Effort minimisation leads to minimisation in time spent.
+                \item Build only once - Feature engineering is carried over from training/testing to production.
+                \item DAI automatically, runs multiple models on various sets of features to get the best model. 
+                \item All the requirements are handled internally by DAI. 
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+%	References
+%-------------------------------------------------------------------------------
+
+\begin{frame}[t, allowframebreaks]
+
+        \frametitle{References}	
+
+        \textbf{How to build a recipe}\\
+        \small{\url{https://github.com/ashrith/how_to_write_a_recipe}}
+
+        \framebreak		
+
+        \printbibliography
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\section{Questions}
+%------------------------------------------------------------------------------
+
+\begin{frame}
+
+        \frametitle{Thanks \& Questions}
+        \begin{itemize}
+                \item Olivier Grellier, Ph.D, Data Scientist, Kaggle Grandmaster
+        \end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+%	\section{End}
+%------------------------------------------------------------------------------
+\end{document}
