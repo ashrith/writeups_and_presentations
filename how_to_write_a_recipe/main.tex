@@ -244,6 +244,27 @@
 %		\subsection{Parameters - Advanced}
 %-------------------------------------------------------------------------------
 	\begin{frame}[fragile]
+		\frametitle{Feature Importance}
+        \begin{enumerate}
+            \item Feature Importance (FI) is a probability of feature being used.
+            \item All features have a standard FI of 1, but they can be changed depending on their importance. 
+            \item Increasing the FI beyond 1 will increase the feature's probability of being used in the model. 
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+	\begin{frame}[fragile]
+        \frametitle{Number of Columns}
+        \begin{enumerate}
+            \item min\_cols and max\_cols set the minimum and the maximum columns the feature can work with. 
+            \item It also tells DAI to only pass the given max/min number of columns.
+        \end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------------------
+%		\subsection{Parameters - Advanced}
+%-------------------------------------------------------------------------------
+	\begin{frame}[fragile]
 		\frametitle{Fit Function}
 		\begin{verbatim}
 		@staticmethod
@@ -253,7 +274,7 @@
 
 		def fit_transform(self, X: dt.Frame, y: np.array = None):
 			X_pandas = X.to_pandas()
-			X_p_log = np.log10(X_pandas)
+			X_p_log = np.log2(X_pandas)
 			return X_p_log
 		\end{verbatim}
 \end{frame}
@@ -265,12 +286,12 @@
 		\begin{verbatim}
 		def fit_transform(self, X: dt.Frame, y: np.array = None):
 			X_pandas = X.to_pandas()
-			X_p_log = np.log10(X_pandas)
+			X_p_log = np.log2(X_pandas)
 			return X_p_log
 
 		def transform(self, X: dt.Frame):
 			X_pandas = X.to_pandas()
-			X_p_log = np.log10(X_pandas)
+			X_p_log = np.log2(X_pandas)
 			return X_p_log
 		\end{verbatim}
 \end{frame}
